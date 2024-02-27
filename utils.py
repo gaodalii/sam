@@ -77,5 +77,9 @@ def seg_everything(input_image):
     alpha = 0.5
     mask_image = cv2.addWeighted(mask_image, alpha, input_image, 1-alpha, 0)
     return mask_image     
+
+def seg_with_prompts(prompts):
+    print(prompts["points"])
+        
      
     

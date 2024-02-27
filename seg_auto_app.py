@@ -1,7 +1,5 @@
 import gradio as gr
 
-
-
 from utils import seg_everything
 
 def test(input_image):
