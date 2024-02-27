@@ -10,8 +10,7 @@ def test(input_image):
 # gr.Row() gr.Column()
 with gr.Blocks(theme = gr.themes.Soft()) as demo:      
     with gr.Column():    
-        image_component = gr.Image(type="numpy")      
-        # with gr.Column(): # input         
+        image_component = gr.Image(type="numpy")               
         with gr.Tab(label="Everything") as seg_everything_tab:  
             seg_everything_btn = gr.Button()                                             
         with gr.Tab(label="Box") as box_tab:  
