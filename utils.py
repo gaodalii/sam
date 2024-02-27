@@ -3,6 +3,7 @@ from functools import wraps
 import numpy as np
 import gradio as gr
 import cv2
+import torch
 
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
 
@@ -13,16 +14,17 @@ sam = sam_model_registry[model_type](checkpoint=sam_checkpoint)
 sam.to(device=device)
 mask_generator = SamAutomaticMaskGenerator(sam)    
 
-def report_error(func):
+def custom_wrapper(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
-            return func(*args, **kwargs)
+            with torch.inference_mode():            
+                return func(*args, **kwargs)
         except Exception as e:
             raise gr.Error(repr(e))            
     return wrapper    
          
-@report_error    
+@custom_wrapper    
 def seg_everything(input_image):
     masks = mask_generator.generate(input_image)
     mask_image = np.zeros_like(input_image)
@@ -33,6 +35,8 @@ def seg_everything(input_image):
         m = ann['segmentation']
         color_mask = np.random.randint(0, 255, size=(3,), dtype=np.uint8) 
         mask_image[m] = color_mask      
+    alpha = 0.5
+    mask_image = cv2.addWeighted(mask_image, alpha, input_image, 1-alpha, 0)
     return mask_image     
      
     
