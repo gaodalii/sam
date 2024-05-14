@@ -4,6 +4,8 @@ import matplotlib
 matplotlib.use("TkAgg") # 不能与下一行交换顺序
 import matplotlib.pyplot as plt
 import cv2
+from PIL import Image
+
 
 from segment_anything import sam_model_registry, SamPredictor
 
@@ -35,26 +37,27 @@ sam = sam_model_registry[model_type](checkpoint=sam_checkpoint)
 sam.to(device=device)
 predictor = SamPredictor(sam)
 
-input_box = np.array([1360, 600, 3760, 3700])
-input_point = None
-input_label = None
-# input_point = np.array([[3021, 793],[3801,249],[1949,1749],[1645,645], [1525,473]])
-# input_label = np.array([1, 1, 1,0, 0])
-input_fname = "street1_DJI_0430.JPG"
+input_box = np.array([1050, 57, 2785, 3921])
+# input_point = None
+# input_label = None
+input_point = np.array([[1625, 773],[2513,1145],[565,957]])
+input_label = np.array([0, 1, 1])
+input_fname = "DJI_20231205115622_0615_D.JPG"
 image = cv2.imread(f'data/{input_fname}')
-image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # h,w,c uint8
   
 predictor.set_image(image)
 masks, _, _ = predictor.predict(
-    point_coords=input_point,
-    point_labels=input_label,
+    # point_coords=input_point,
+    # point_labels=input_label,
     box=input_box[None, :],
     multimask_output=False,
-)
-masked_image = image.copy()
-masked_image[np.logical_not(masks[0])] = 0
-masked_image = cv2.cvtColor(masked_image, cv2.COLOR_RGB2BGR)
-cv2.imwrite(f"output/sam_{input_fname}", masked_image)
+) # masks[0] h,w bool
+
+# masked_image = image.copy()
+# masked_image[np.logical_not(masks[0])] = 255
+# masked_image = cv2.cvtColor(masked_image, cv2.COLOR_RGB2BGR)
+# cv2.imwrite(f"output/{input_fname}", masked_image)
 
 # numerical_mask = masks[0].astype(np.uint8)*255
 # cv2.imwrite(f"data/building/masks/{input_fname}.png", numerical_mask)
@@ -65,5 +68,15 @@ show_mask(masks[0], plt.gca())
 show_box(input_box, plt.gca())
 plt.axis('off')
 plt.show()
+
+####################
+alpha = masks[0].astype(np.uint8)*255
+alpha = alpha[:,:,np.newaxis]
+rgba = np.concatenate([image.copy(), alpha], axis=-1)
+# print(f"alpha:{alpha.shape}")
+# print(f"rgba:{rgba.shape}")
+rgba = Image.fromarray(rgba, 'RGBA')
+rgba.save(f"output/{input_fname.replace('JPG','png')}")
+print(rgba)
 
   

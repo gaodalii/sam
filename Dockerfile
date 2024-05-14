@@ -36,7 +36,7 @@ RUN pip install git+https://github.com/facebookresearch/segment-anything.git
 
 RUN pip install opencv-python pycocotools matplotlib onnxruntime onnx gradio
 
-WORKDIR DIR /usr/app
+WORKDIR /usr/app
 
 COPY . .
 # WORKDIR /weights
