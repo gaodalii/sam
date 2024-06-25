@@ -1,9 +1,6 @@
 weights/*
-*.csv
 __pycache__/
 flagged/
-tmp.png
-test.py
 *.png
 *.jpg
 *.JPG

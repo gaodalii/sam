@@ -1,0 +1,47 @@
+# docker compose  -p instantmesh up --remove-orphans
+
+services:
+  sam :    
+    image: registry.light-field.tech/citygen/sam:test           
+    restart: unless-stopped
+    cap_add:
+      - SYS_ADMIN                                           
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            device_ids: ['0'] # ['1', '3'] 
+            capabilities: [gpu]           
+    environment:
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - HF_HUB_OFFLINE=1
+      - DISPLAY
+      # - http_proxy=http://127.0.0.1:11000
+      # - https_proxy=http://127.0.0.1:11000         
+      # - no_proxy=localhost,127.0.0.1,::1
+    init: true
+    ipc: "host"
+    network_mode: host
+    # ports:
+    #   - "8099:8099"     
+    #   - "8022:8022"           
+    #   - "8066:8066"         
+    runtime: nvidia      
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      stack:
+        soft: 67108864
+        hard: 67108864            
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - $HOME/.Xauthority:/root/.Xauthority:rw    
+      - /etc/localtime:/etc/localtime:ro      
+      - ./:/workspace
+      - /city_gen:/city_gen          
+    working_dir: /workspace
+    command: ["tail", "-f"]                  
+    # command: ["/usr/sbin/sshd", "-D", "-p", "8022"]               
+    # command: ["jupyter-lab", "--no-browser", "--port=9999", "--allow-root", "--ip=192.168.6.200", "--NotebookApp.iopub_data_rate_limit=1.0e10"]   
