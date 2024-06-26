@@ -42,6 +42,6 @@ services:
       - ./:/workspace
       - /city_gen:/city_gen          
     working_dir: /workspace
-    command: ["tail", "-f"]                  
+    # command: ["tail", "-f"]                  
     # command: ["/usr/sbin/sshd", "-D", "-p", "8022"]               
     # command: ["jupyter-lab", "--no-browser", "--port=9999", "--allow-root", "--ip=192.168.6.200", "--NotebookApp.iopub_data_rate_limit=1.0e10"]   

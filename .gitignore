@@ -1,6 +1,6 @@
-weights/*
 __pycache__/
-flagged/
-*.png
-*.jpg
-*.JPG
+.vscode/
+
+/data
+/flagged
+/output

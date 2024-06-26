@@ -49,6 +49,11 @@ RUN pip install --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple openc
 RUN pip install "numpy <2" --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 
+RUN apt-get update && apt-get -y install tini
+
+ENTRYPOINT ["tini", "-s", "--"]
+
+CMD [ "tail", "-f"]    
 
 # WORKDIR /usr/app
 
